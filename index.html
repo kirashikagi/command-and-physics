@@ -1,12 +1,362 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
- <head>
-   <meta charset="UTF-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>Бюджет Церкви</title>
- </head>
- <body>
-   <div id="root"></div>
-   <script type="module" src="/src/main.jsx"></script>
- </body>
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <title>Физика Служения</title>
+   
+   <!-- === НАСТРОЙКИ ДЛЯ СОЦСЕТЕЙ === -->
+   <meta name="description" content="5 духовных законов управления командой. Интерактивная визуализация принципов лидерства.">
+   <meta name="theme-color" content="#fdfbf7">
+   <meta property="og:type" content="website">
+   <meta property="og:title" content="Физика Служения">
+   <meta property="og:description" content="5 духовных законов управления командой.">
+   <meta property="og:image" content="https://placehold.co/1200x630/fdfbf7/2c3e50/png?text=Physics+of+Ministry">
+   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
+
+   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+   <style>
+       :root {
+           --bg-gradient: radial-gradient(circle at 50% 10%, #fdfbf7, #eef2f3);
+           --glass-bg: rgba(255, 255, 255, 0.85);
+           --glass-border: rgba(255, 255, 255, 0.6);
+           --text-primary: #2c3e50;
+           --text-secondary: #5d6d7e;
+           --accent-gold: #d4af37;
+           --accent-blue: #3498db;
+           --danger: #e74c3c;
+       }
+
+       * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+       
+       body {
+           margin: 0;
+           background: var(--bg-gradient);
+           color: var(--text-primary);
+           font-family: 'Lato', sans-serif;
+           overflow: hidden;
+           height: 100vh;
+           width: 100vw;
+           display: flex;
+           flex-direction: column;
+       }
+
+       #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+       canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+       
+       #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
+
+       /* HEADER */
+       .header {
+           position: absolute; top: 0; left: 0; width: 100%; padding: 20px;
+           display: flex; justify-content: space-between; align-items: flex-start;
+           pointer-events: none;
+           background: linear-gradient(to bottom, rgba(255,255,255,0.95), transparent);
+       }
+       
+       .title-block { pointer-events: auto; }
+       .title-block h1 {
+           font-family: 'Cinzel', serif; font-size: 18px; font-weight: 600; margin: 0;
+           color: var(--text-primary); letter-spacing: 1px;
+       }
+       .title-block span {
+           font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+           color: var(--accent-gold); font-weight: 700; display: block; margin-top: 4px;
+       }
+
+       .info-toggle {
+           pointer-events: auto; background: rgba(255,255,255,0.8); border: 1px solid var(--glass-border);
+           color: var(--text-secondary); width: 40px; height: 40px; border-radius: 50%;
+           display: flex; align-items: center; justify-content: center; cursor: pointer;
+           backdrop-filter: blur(8px); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+       }
+
+       /* NAVIGATION ZONES */
+       .nav-zone {
+           position: absolute; top: 50%; transform: translateY(-50%);
+           width: 60px; height: 120px; display: flex; align-items: center; justify-content: center;
+           cursor: pointer; pointer-events: auto; z-index: 50; border-radius: 12px;
+           color: rgba(0,0,0,0.15); transition: all 0.2s;
+       }
+       .nav-zone:active { background: rgba(0,0,0,0.05); color: var(--text-secondary); }
+       .nav-left { left: 0; }
+       .nav-right { right: 0; }
+
+       /* PANEL */
+       .info-panel {
+           position: absolute; bottom: 0; left: 0; width: 100%;
+           background: var(--glass-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+           border-top: 1px solid var(--glass-border); padding: 24px;
+           padding-bottom: max(30px, env(safe-area-inset-bottom));
+           pointer-events: auto; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+           max-height: 80vh; overflow-y: auto; border-radius: 20px 20px 0 0;
+           transform: translateY(100%); z-index: 60;
+           box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+       }
+       .panel-visible { transform: translateY(0); }
+
+       .content-slide { display: none; animation: fadeIn 0.4s ease; }
+       .content-slide.active { display: block; }
+       @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+       h2 { font-family: 'Cinzel', serif; font-size: 22px; margin: 0 0 8px 0; color: var(--text-primary); }
+       .scripture-ref { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); font-weight: 700; margin-bottom: 12px; display: block; }
+       p { font-size: 15px; line-height: 1.6; margin: 0 0 16px 0; color: var(--text-secondary); }
+
+       .principle-box {
+           background: rgba(255,255,255,0.6); border-left: 3px solid var(--accent-blue);
+           padding: 14px; border-radius: 0 8px 8px 0; margin-top: 16px;
+       }
+       .principle-title {
+           color: var(--accent-blue); font-size: 10px; text-transform: uppercase;
+           font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; display: block;
+       }
+
+       .hint-overlay {
+           position: absolute; bottom: 100px; width: 100%; text-align: center;
+           pointer-events: none; opacity: 0; transition: opacity 0.5s;
+       }
+       .hint-bubble {
+           display: inline-block; background: rgba(255,255,255,0.95); padding: 8px 16px;
+           border-radius: 30px; font-size: 12px; color: var(--text-primary);
+           backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); font-weight: 600;
+       }
+
+       @media (min-width: 768px) {
+           .info-panel {
+               width: 400px; right: 40px; left: auto; top: 50%; bottom: auto;
+               transform: translate(120%, -50%); height: auto; max-height: 80vh;
+               border: 1px solid var(--glass-border); border-radius: 16px;
+           }
+           .panel-visible { transform: translate(0, -50%); }
+           .nav-right { right: 20px; }
+           .hint-overlay { bottom: 40px; }
+       }
+   </style>
+</head>
+<body>
+
+   <div id="canvas-container">
+       <canvas id="main-canvas"></canvas>
+   </div>
+
+   <div id="ui-layer">
+       
+       <div class="header">
+           <div class="title-block">
+               <h1>Физика Служения</h1>
+               <span id="slide-label">Глава I</span>
+           </div>
+           <button class="info-toggle" onclick="togglePanel()">
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+           </button>
+       </div>
+
+       <div class="nav-zone nav-left" onclick="app.prev(event)">
+           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+       </div>
+       <div class="nav-zone nav-right" onclick="app.next(event)">
+           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+       </div>
+
+       <div class="hint-overlay" id="hint-overlay">
+           <div class="hint-bubble" id="hint-text">Нажмите для старта</div>
+       </div>
+
+       <div class="info-panel" id="info-panel">
+           <div style="width: 40px; height: 4px; background: rgba(0,0,0,0.1); border-radius: 2px; margin: -10px auto 20px auto; cursor: pointer;" onclick="togglePanel()"></div>
+           
+           <div class="content-slide active">
+               <span class="scripture-ref">Притчи 19:21</span>
+               <h2>Смирение перед Планом</h2>
+               <p>Маятники стартуют вместе, но их пути расходятся. Мы контролируем посев, но не жатву.</p>
+               <div class="principle-box">
+                   <span class="principle-title">Принцип:</span>
+                   <p>Не пытайтесь быть Богом для своей команды. Результат зависит от Духа. Сейте с верой, но будьте готовы к тому, что Бог поведет всё иначе.</p>
+               </div>
+           </div>
+
+           <div class="content-slide">
+               <span class="scripture-ref">Захария 4:6</span>
+               <h2>Поток Благодати</h2>
+               <p>Частицы огибают препятствия. Ваше касание создает русло, а не ломает поток.</p>
+               <div class="principle-box">
+                   <span class="principle-title">Принцип:</span>
+                   <p>Если служение — это постоянная борьба и надрыв, вы идете против течения. Ищите, где Дух уже движется, и направляйте усилия туда.</p>
+               </div>
+           </div>
+
+           <div class="content-slide">
+               <span class="scripture-ref">Луки 16:10</span>
+               <h2>Сила Постоянства</h2>
+               <p>Одно простое действие, повторенное многократно, создает величественную структуру.</p>
+               <div class="principle-box">
+                   <span class="principle-title">Принцип:</span>
+                   <p>Царство строится на верности в малом. Дисциплина (повторение) рождает пробуждение (резонанс).</p>
+               </div>
+           </div>
+
+           <div class="content-slide">
+               <span class="scripture-ref">Иоанна 12:32</span>
+               <h2>Духовное Притяжение</h2>
+               <p>Частицы притягиваются к массе. Вы не бегаете за ними, вы удерживаете их на орбите.</p>
+               <div class="principle-box">
+                   <span class="principle-title">Принцип:</span>
+                   <p>Не уговаривайте служить. Наращивайте свою духовную массу во Христе. Люди идут к Свету, а не за должностью.</p>
+               </div>
+           </div>
+
+           <div class="content-slide">
+               <span class="scripture-ref">1 Кор. 12:26</span>
+               <h2>Единство Тела</h2>
+               <p>Натяжение одной нити чувствует вся сеть. Резкое движение разрывает связь.</p>
+               <div class="principle-box" style="border-left-color: var(--danger);">
+                   <span class="principle-title" style="color: var(--danger);">Важно:</span>
+                   <p>Люди важнее проектов. Доверие — хрупкая вещь. Не жертвуйте отношениями ради эффективности.</p>
+               </div>
+           </div>
+           
+           <div style="margin-top: 20px; text-align: center; opacity: 0.5; font-size: 11px;">Коснитесь любой области, чтобы закрыть</div>
+       </div>
+   </div>
+
+<script>
+const app = {
+   idx: 0, w: 0, h: 0, sim: null,
+   canvas: document.getElementById('main-canvas'),
+   ctx: document.getElementById('main-canvas').getContext('2d'),
+   
+   init() {
+       this.resize();
+       window.addEventListener('resize', () => this.resize());
+       this.setSlide(0);
+       this.loop();
+       document.getElementById('info-panel').addEventListener('click', (e) => {
+           if(e.target.id === 'info-panel') togglePanel();
+       });
+       setTimeout(() => togglePanel(), 600);
+   },
+
+   resize() {
+       this.w = window.innerWidth; this.h = window.innerHeight;
+       this.canvas.width = this.w; this.canvas.height = this.h;
+       if(this.sim && this.sim.resize) this.sim.resize(this.w, this.h);
+   },
+
+   setSlide(i) {
+       if(i < 0 || i > 4) return;
+       this.idx = i;
+       document.querySelectorAll('.content-slide').forEach((el, k) => el.classList.toggle('active', k === i));
+       
+       const labels = ["I. Смирение", "II. Поток", "III. Верность", "IV. Влияние", "V. Единство"];
+       document.getElementById('slide-label').innerText = labels[i];
+       
+       const hints = ["Нажмите для старта", "Проведите пальцем", "Ведите от центра", "Удерживайте палец", "Тяните узел"];
+       const hOverlay = document.getElementById('hint-overlay');
+       document.getElementById('hint-text').innerText = hints[i];
+       hOverlay.style.opacity = '1';
+       clearTimeout(this.ht);
+       this.ht = setTimeout(() => hOverlay.style.opacity = '0', 3500);
+
+       this.sim = null;
+       if(i===0) this.sim = new ChaosSim(this.w, this.h);
+       if(i===1) this.sim = new FlowSim(this.w, this.h);
+       if(i===2) this.sim = new ResonanceSim(this.w, this.h);
+       if(i===3) this.sim = new GravitySim(this.w, this.h);
+       if(i===4) this.sim = new FabricSim(this.w, this.h);
+   },
+   
+   next(e) { if(e)e.stopPropagation(); this.setSlide(this.idx+1); },
+   prev(e) { if(e)e.stopPropagation(); this.setSlide(this.idx-1); },
+   loop() { if(this.sim) this.sim.update(this.ctx); requestAnimationFrame(()=>this.loop()); }
+};
+
+function togglePanel() { document.getElementById('info-panel').classList.toggle('panel-visible'); }
+
+// --- SIMULATIONS ---
+
+class ChaosSim {
+   constructor(w,h){this.w=w;this.h=h;this.init(); document.addEventListener('click',this.c=()=>this.init());}
+   init(){this.p=[];for(let i=0;i<50;i++)this.p.push({a1:1.57+(i*0.0002),a2:1.57,v1:0,v2:0,c:`hsla(210,30%,${30+i}%,0.6)`});this.cx=w/2;this.cy=h/3;}
+   resize(w,h){this.w=w;this.h=h;this.cx=w/2;this.cy=h/3;}
+   update(ctx){
+       ctx.fillStyle='rgba(253,251,247,0.2)';ctx.fillRect(0,0,this.w,this.h);
+       let g=1,m=10,l=Math.min(this.w,this.h)/4.5;
+       this.p.forEach(p=>{
+           let d=l*(30-10*Math.cos(2*p.a1-2*p.a2));
+           let a1=(-g*30*Math.sin(p.a1)-10*g*Math.sin(p.a1-2*p.a2)-2*Math.sin(p.a1-p.a2)*10*(p.v2*p.v2*l+p.v1*p.v1*l*Math.cos(p.a1-p.a2)))/d;
+           let a2=(2*Math.sin(p.a1-p.a2)*(p.v1*p.v1*l*20+g*20*Math.cos(p.a1)+p.v2*p.v2*l*10*Math.cos(p.a1-p.a2)))/d;
+           p.v1+=a1;p.v2+=a2;p.a1+=p.v1;p.a2+=p.v2;p.v1*=0.99;p.v2*=0.99;
+           let x1=l*Math.sin(p.a1)+this.cx,y1=l*Math.cos(p.a1)+this.cy,x2=x1+l*Math.sin(p.a2),y2=y1+l*Math.cos(p.a2);
+           ctx.strokeStyle=p.c;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+       });
+   }
+}
+
+class FlowSim {
+   constructor(w,h){this.w=w;this.h=h;this.p=Array(600).fill().map(()=>this.r());this.m={x:-999,y:-999};this.ev=e=>this.m=gp(e);window.addEventListener('mousemove',this.ev);window.addEventListener('touchmove',this.ev);}
+   r(){return{x:Math.random()*this.w,y:Math.random()*this.h,vx:0,vy:0,l:Math.random()*100}}
+   resize(w,h){this.w=w;this.h=h;}
+   update(ctx){
+       ctx.fillStyle='rgba(255,255,255,0.2)';ctx.fillRect(0,0,this.w,this.h);
+       this.p.forEach(p=>{
+           let a=(Math.cos(p.x*0.005)+Math.sin(p.y*0.005)*3)*2, dx=this.m.x-p.x, dy=this.m.y-p.y;
+           let fx=Math.cos(a), fy=Math.sin(a);
+           if(dx*dx+dy*dy<20000){fx+=dx*0.015;fy+=dy*0.015;}
+           p.vx+=fx*0.2;p.vy+=fy*0.2;p.vx*=0.95;p.vy*=0.95;p.x+=p.vx;p.y+=p.vy;p.l--;
+           if(p.l<0||p.x<0||p.x>this.w||p.y<0||p.y>this.h)Object.assign(p,this.r());
+           let v=Math.abs(p.vx)+Math.abs(p.vy);
+           ctx.fillStyle=`hsla(${200+v*10},70%,50%,0.8)`;ctx.beginPath();ctx.arc(p.x,p.y,1.5,0,6.28);ctx.fill();
+       });
+   }
+}
+
+class ResonanceSim {
+   constructor(w,h){this.w=w;this.h=h;this.sym=6;this.p=Array(60).fill().map(()=>({a:Math.random()*6.28,r:Math.random()*150+50,s:0.01+Math.random()*0.02,c:Math.random()>0.5?45:260}));this.ev=e=>{let p=gp(e);this.sym=Math.floor((p.x/this.w)*12)+3};window.addEventListener('mousemove',this.ev);window.addEventListener('touchmove',this.ev);}
+   resize(w,h){this.w=w;this.h=h;}
+   update(ctx){
+       ctx.fillStyle='rgba(255,255,255,0.2)';ctx.fillRect(0,0,this.w,this.h);
+       ctx.save();ctx.translate(this.w/2,this.h/2);
+       this.p.forEach(p=>p.a+=p.s);
+       for(let i=0;i<this.sym;i++){
+           ctx.rotate((Math.PI*2)/this.sym);
+           this.p.forEach(p=>{
+               let x=Math.cos(p.a)*p.r,y=Math.sin(p.a)*p.r;
+               ctx.fillStyle=`hsla(${p.c},70%,50%,0.8)`;ctx.beginPath();ctx.arc(x,y,2.5,0,6.28);ctx.fill();
+               ctx.strokeStyle=`hsla(${p.c},70%,40%,0.2)`;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(0,0);ctx.stroke();
+           });
+       }
+       ctx.restore();
+   }
+}
+
+class GravitySim {
+   constructor(w,h){this.w=w;this.h=h;this.p=Array(400).fill().map(()=>({x:Math.random()*w,y:Math.random()*h,vx:0,vy:0,c:`hsl(${Math.random()*360},60%,50%)`}));this.a=false;this.m={x:0,y:0};this.d=e=>{this.a=true;this.m=gp(e)};this.mv=e=>{if(this.a)this.m=gp(e)};this.u=()=>this.a=false;window.addEventListener('mousedown',this.d);window.addEventListener('touchstart',this.d);window.addEventListener('mousemove',this.mv);window.addEventListener('touchmove',this.mv);window.addEventListener('mouseup',this.u);window.addEventListener('touchend',this.u);}
+   resize(w,h){this.w=w;this.h=h;}
+   update(ctx){
+       ctx.fillStyle='rgba(255,255,255,0.2)';ctx.fillRect(0,0,this.w,this.h);
+       this.p.forEach(p=>{
+           if(this.a){let dx=this.m.x-p.x,dy=this.m.y-p.y,d=Math.max(1000,dx*dx+dy*dy),f=1200/d;p.vx+=(dx*f)/Math.sqrt(d);p.vy+=(dy*f)/Math.sqrt(d);}
+           p.x+=p.vx;p.y+=p.vy;p.vx*=0.99;p.vy*=0.99;if(p.x<0)p.x=this.w;if(p.x>this.w)p.x=0;if(p.y<0)p.y=this.h;if(p.y>this.h)p.y=0;
+           ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,2,0,6.28);ctx.fill();
+       });
+   }
+}
+
+class FabricSim {
+   constructor(w,h){this.w=w;this.h=h;this.i();this.d=null;this.dn=e=>{let m=gp(e),nr=null,md=50;this.p.forEach(p=>{let d=Math.hypot(p.x-m.x,p.y-m.y);if(d<md){md=d;nr=p}});if(nr)this.d=nr};this.mv=e=>{if(this.d){let m=gp(e);this.d.x=m.x;this.d.y=m.y;this.d.ox=m.x;this.d.oy=m.y}};this.u=()=>this.d=null;window.addEventListener('mousedown',this.dn);window.addEventListener('touchstart',this.dn,{passive:false});window.addEventListener('mousemove',this.mv);window.addEventListener('touchmove',this.mv,{passive:false});window.addEventListener('mouseup',this.u);window.addEventListener('touchend',this.u);}
+   i(){this.p=[];this.s=[];let sp=30,c=Math.min(25,Math.floor(this.w/sp)),r=Math.min(20,Math.floor(this.h/sp)),sx=(this.w-c*sp)/2,sy=50;for(let y=0;y<r;y++)for(let x=0;x<c;x++)this.p.push({x:sx+x*sp,y:sy+y*sp,ox:sx+x*sp,oy:sy+y*sp,pin:y===0});for(let y=0;y<r;y++)for(let x=0;x<c;x++){let i=y*c+x;if(x<c-1)this.s.push({a:this.p[i],b:this.p[i+1],l:sp,ok:true});if(y<r-1)this.s.push({a:this.p[i],b:this.p[i+c],l:sp,ok:true});}}
+   resize(w,h){this.w=w;this.h=h;this.i();}
+   update(ctx){
+       ctx.clearRect(0,0,this.w,this.h);
+       this.p.forEach(p=>{if(p.pin||p===this.d)return;let vx=(p.x-p.ox)*0.95,vy=(p.y-p.oy)*0.95;p.ox=p.x;p.oy=p.y;p.x+=vx;p.y+=vy+0.2;});
+       for(let i=0;i<3;i++)this.s.forEach(s=>{if(!s.ok)return;let dx=s.b.x-s.a.x,dy=s.b.y-s.a.y,d=Math.hypot(dx,dy);if(d>s.l*4)s.ok=false;let df=s.l-d,pc=df/d/2,ox=dx*pc,oy=dy*pc;if(!s.a.pin&&s.a!==this.d){s.a.x-=ox;s.a.y-=oy}if(!s.b.pin&&s.b!==this.d){s.b.x+=ox;s.b.y+=oy}});
+       ctx.lineWidth=1.5;this.s.forEach(s=>{if(!s.ok)return;let st=Math.max(0,(Math.hypot(s.b.x-s.a.x,s.b.y-s.a.y)-s.l)/15);ctx.strokeStyle=st<0.5?'#bdc3c7':st<0.8?'#f1c40f':'#e74c3c';ctx.beginPath();ctx.moveTo(s.a.x,s.a.y);ctx.lineTo(s.b.x,s.b.y);ctx.stroke();});
+       ctx.fillStyle='#34495e';this.p.forEach(p=>{if(p.pin||p===this.d){ctx.beginPath();ctx.arc(p.x,p.y,2,0,6.28);ctx.fill()}});
+   }
+}
+function gp(e){let t=e.touches?e.touches[0]:e;return{x:t.clientX,y:t.clientY};}
+app.init();
+</script>
+</body>
 </html>
