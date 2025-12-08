@@ -1,26 +1,24 @@
-
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-   <title>Физика Служения</title>
+   <title>Физика Служения: Глубина</title>
    
    <!-- META -->
    <meta name="theme-color" content="#fdfbf7">
    <meta property="og:title" content="Физика Служения">
-   <meta property="og:image" content="https://placehold.co/1200x630/fdfbf7/2c3e50/png?text=Physics+of+Ministry">
+   <meta property="og:description" content="Интерактивные принципы церковного управления.">
    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
 
-   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
    <style>
        :root {
-           --bg-gradient: radial-gradient(circle at 50% 10%, #ffffff, #f0f4f8);
-           --glass-bg: rgba(255, 255, 255, 0.9);
+           --bg-gradient: radial-gradient(circle at 50% 10%, #fffcf5, #f0f4f8);
+           --glass-bg: rgba(255, 255, 255, 0.95);
            --glass-border: rgba(200, 200, 200, 0.5);
            --text-primary: #1a252f;
-           --text-secondary: #546e7a;
+           --text-body: #34495e;
            --accent-gold: #b7950b;
            --accent-blue: #2980b9;
            --danger: #c0392b;
@@ -47,25 +45,25 @@
 
        /* HEADER */
        .header {
-           position: absolute; top: 0; left: 0; width: 100%; padding: 24px;
+           position: absolute; top: 0; left: 0; width: 100%; padding: 20px;
            display: flex; justify-content: space-between; align-items: flex-start;
            pointer-events: none;
-           background: linear-gradient(to bottom, rgba(255,255,255,0.95), transparent);
+           background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
        }
        
        .title-block { pointer-events: auto; }
        .title-block h1 {
-           font-family: 'Cinzel', serif; font-size: 20px; font-weight: 600; margin: 0;
+           font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; margin: 0;
            color: var(--text-primary); letter-spacing: 1px;
        }
        .title-block span {
-           font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+           font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
            color: var(--accent-gold); font-weight: 700; display: block; margin-top: 4px;
        }
 
        .info-toggle {
            pointer-events: auto; background: #fff; border: 1px solid var(--glass-border);
-           color: var(--text-secondary); width: 44px; height: 44px; border-radius: 50%;
+           color: var(--text-body); width: 40px; height: 40px; border-radius: 50%;
            display: flex; align-items: center; justify-content: center; cursor: pointer;
            box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s;
        }
@@ -86,33 +84,57 @@
        .info-panel {
            position: absolute; bottom: 0; left: 0; width: 100%;
            background: var(--glass-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-           border-top: 1px solid var(--glass-border); padding: 30px;
-           padding-bottom: max(30px, env(safe-area-inset-bottom));
+           border-top: 1px solid var(--glass-border); padding: 0;
            pointer-events: auto; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-           max-height: 80vh; overflow-y: auto; border-radius: 24px 24px 0 0;
+           max-height: 85vh; overflow-y: auto; border-radius: 24px 24px 0 0;
            transform: translateY(100%); z-index: 60;
-           box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+           box-shadow: 0 -10px 50px rgba(0,0,0,0.15);
+           display: flex; flex-direction: column;
        }
        .panel-visible { transform: translateY(0); }
 
-       .content-slide { display: none; animation: fadeIn 0.4s ease; }
+       .panel-content {
+           padding: 30px;
+           padding-bottom: max(40px, env(safe-area-inset-bottom));
+       }
+
+       .content-slide { display: none; animation: fadeIn 0.5s ease; }
        .content-slide.active { display: block; }
        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-       h2 { font-family: 'Cinzel', serif; font-size: 24px; margin: 0 0 8px 0; color: var(--text-primary); }
-       .scripture-ref { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); font-weight: 700; margin-bottom: 16px; display: block; }
-       p { font-size: 16px; line-height: 1.6; margin: 0 0 20px 0; color: var(--text-secondary); }
-
-       .principle-box {
-           background: #fff; border-left: 3px solid var(--accent-blue);
-           padding: 16px; border-radius: 0 8px 8px 0; margin-top: 16px;
-           box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+       /* TYPOGRAPHY */
+       h2 {
+           font-family: 'Cinzel', serif; font-size: 26px; margin: 0 0 8px 0; color: var(--text-primary);
+           border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 15px; margin-bottom: 20px;
        }
-       .principle-title {
-           color: var(--accent-blue); font-size: 11px; text-transform: uppercase;
-           font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; display: block;
+       .scripture-ref {
+           font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-gold);
+           font-weight: 700; margin-bottom: 8px; display: block; font-family: 'Lato', sans-serif;
+       }
+       
+       /* TEXT BLOCKS */
+       .block-title {
+           font-family: 'Lato', sans-serif; font-size: 10px; text-transform: uppercase;
+           letter-spacing: 1.5px; font-weight: 900; color: #95a5a6; margin-bottom: 8px; margin-top: 25px;
+       }
+       .text-body {
+           font-family: 'Cormorant Garamond', serif; font-size: 19px; line-height: 1.5;
+           color: var(--text-body); margin: 0; font-weight: 600;
        }
 
+       .highlight-box {
+           background: #fff; border-left: 3px solid var(--accent-gold);
+           padding: 20px; border-radius: 0 8px 8px 0; margin-top: 10px;
+           box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+       }
+       
+       .danger-box {
+           background: #fff5f5; border-left: 3px solid var(--danger);
+           padding: 20px; border-radius: 0 8px 8px 0; margin-top: 10px;
+           color: #c0392b;
+       }
+
+       /* HINT */
        .hint-overlay {
            position: absolute; bottom: 120px; width: 100%; text-align: center;
            pointer-events: none; opacity: 0; transition: opacity 0.5s;
@@ -123,11 +145,12 @@
            box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-weight: 600;
        }
 
+       /* DESKTOP */
        @media (min-width: 768px) {
            .info-panel {
-               width: 420px; right: 40px; left: auto; top: 50%; bottom: auto;
-               transform: translate(120%, -50%); height: auto; max-height: 80vh;
-               border: 1px solid var(--glass-border); border-radius: 16px;
+               width: 480px; right: 40px; left: auto; top: 50%; bottom: auto;
+               transform: translate(120%, -50%); height: auto; max-height: 90vh;
+               border: 1px solid var(--glass-border); border-radius: 12px;
            }
            .panel-visible { transform: translate(0, -50%); }
            .nav-right { right: 20px; }
@@ -165,59 +188,113 @@
        </div>
 
        <div class="info-panel" id="info-panel">
-           <div style="width: 40px; height: 4px; background: rgba(0,0,0,0.1); border-radius: 2px; margin: -10px auto 20px auto; cursor: pointer;" onclick="togglePanel()"></div>
-           
-           <div class="content-slide active">
-               <span class="scripture-ref">Притчи 19:21</span>
-               <h2>Смирение перед Планом</h2>
-               <p>Маятники стартуют вместе, но их пути расходятся. Человек контролирует посев, но не жатву.</p>
-               <div class="principle-box">
-                   <span class="principle-title">Принцип:</span>
-                   <p>Не пытайтесь быть Богом для своей команды. Результат зависит от Духа. Сейте с верой, но будьте готовы к тому, что Бог поведет всё иначе.</p>
-               </div>
-           </div>
-
-           <div class="content-slide">
-               <span class="scripture-ref">Захария 4:6</span>
-               <h2>Поток Благодати</h2>
-               <p>Частицы огибают препятствия. Ваше касание создает русло, а не ломает поток.</p>
-               <div class="principle-box">
-                   <span class="principle-title">Принцип:</span>
-                   <p>Если служение — это постоянная борьба и надрыв, вы идете против течения. Ищите, где Дух уже движется, и направляйте усилия туда.</p>
-               </div>
-           </div>
-
-           <div class="content-slide">
-               <span class="scripture-ref">Луки 16:10</span>
-               <h2>Сила Постоянства</h2>
-               <p>Малое действие, повторенное многократно, создает сложную структуру.</p>
-               <div class="principle-box">
-                   <span class="principle-title">Принцип:</span>
-                   <p>Царство строится на верности в малом. Дисциплина (повторение) рождает пробуждение (резонанс).</p>
-               </div>
-           </div>
-
-           <div class="content-slide">
-               <span class="scripture-ref">Иоанна 12:32</span>
-               <h2>Духовное Притяжение</h2>
-               <p>Частицы притягиваются к массе. Вы не бегаете за ними, вы удерживаете их на орбите.</p>
-               <div class="principle-box">
-                   <span class="principle-title">Принцип:</span>
-                   <p>Не уговаривайте служить. Наращивайте свою духовную массу во Христе. Люди идут к Свету, а не за должностью.</p>
-               </div>
-           </div>
-
-           <div class="content-slide">
-               <span class="scripture-ref">1 Кор. 12:26</span>
-               <h2>Единство Тела</h2>
-               <p>Натяжение одной нити чувствует вся сеть. Резкое движение разрывает связь.</p>
-               <div class="principle-box" style="border-left-color: var(--danger);">
-                   <span class="principle-title" style="color: var(--danger);">Важно:</span>
-                   <p>Люди важнее проектов. Доверие — хрупкая вещь. Не жертвуйте отношениями ради эффективности.</p>
-               </div>
+           <div style="width: 100%; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;" onclick="togglePanel()">
+                <div style="width: 40px; height: 4px; background: rgba(0,0,0,0.1); border-radius: 2px;"></div>
            </div>
            
-           <div style="margin-top: 20px; text-align: center; opacity: 0.5; font-size: 11px;">Коснитесь, чтобы закрыть</div>
+           <div class="panel-content">
+               
+               <!-- 1. CHAOS -->
+               <div class="content-slide active">
+                   <span class="scripture-ref">Притчи 16:9 • Иакова 4:13-15</span>
+                   <h2>Иллюзия Контроля</h2>
+                   
+                   <div class="block-title">Наблюдение</div>
+                   <p class="text-body">
+                       Вы запускаете 100 маятников из почти одной точки. Сначала они движутся синхронно, создавая иллюзию порядка. Но микроскопическая разница в старте (меньше волоса) неизбежно приводит к полному хаосу. Предсказать положение маятника через 10 секунд математически невозможно.
+                   </p>
+
+                   <div class="highlight-box">
+                       <span class="principle-title" style="color:var(--accent-gold)">Принцип Лидерства:</span>
+                       <p class="text-body" style="font-size: 17px;">
+                           Мы часто путаем «управление» с «контролем». Мы пишем стратегии на 5 лет, думая, что контролируем будущее. Но реальность — это хаотическая система. Один «случайный» разговор, один кризис или одно озарение Духа меняют траекторию всей церкви.
+                           <br><br>
+                           Лидер, который пытается жестко контролировать всё, сломается. Лидер, который доверяет Суверенитету Бога, адаптируется. Вы отвечаете за посев (старт), но жатва (результат) — в руках Господа.
+                       </p>
+                   </div>
+               </div>
+
+               <!-- 2. FLOW -->
+               <div class="content-slide">
+                   <span class="scripture-ref">Захария 4:6 • Матфея 11:30</span>
+                   <h2>Поток Благодати</h2>
+
+                   <div class="block-title">Наблюдение</div>
+                   <p class="text-body">
+                       Тысячи частиц движутся потоком. Когда они встречают препятствие, они не бьются об него, не останавливаются и не спорят. Они мягко огибают его, сохраняя импульс. Ваше касание не ломает их природу, а создает новый центр притяжения.
+                   </p>
+
+                   <div class="highlight-box">
+                       <span class="principle-title" style="color:var(--accent-blue)">Принцип Лидерства:</span>
+                       <p class="text-body" style="font-size: 17px;">
+                           Есть разница между «усилиями» и «надрывом». В служении мы часто думаем: «Чем мне тяжелее, тем я святее». Это ложь. Иго Христа — благое.
+                           <br><br>
+                           Если в вашей команде постоянное трение, конфликты и усталость — вы идете против Потока Благодати. Вы пытаетесь пробить стену плотью («воинством и силою»), вместо того чтобы найти русло, где уже течет Дух. Мудрость лидера — найти, где Бог уже действует, и направить ресурсы туда.
+                       </p>
+                   </div>
+               </div>
+
+               <!-- 3. RESONANCE -->
+               <div class="content-slide">
+                   <span class="scripture-ref">Луки 16:10 • Галатам 6:9</span>
+                   <h2>Сила Верности</h2>
+
+                   <div class="block-title">Наблюдение</div>
+                   <p class="text-body">
+                       На экране нет сложного программирования. Здесь всего одна простая точка и правило симметрии. Но одно малое действие, повторенное многократно и отраженное в других, создает величественный, сложный узор.
+                   </p>
+
+                   <div class="highlight-box">
+                       <span class="principle-title" style="color:var(--accent-gold)">Принцип Лидерства:</span>
+                       <p class="text-body" style="font-size: 17px;">
+                           Мы живем в культуре «мгновенного успеха» и вирусного роста. Но Царство Божье растет иначе — «сперва зелень, потом колос».
+                           <br><br>
+                           Здоровье вашей церкви зависит не от одной яркой конференции раз в год, а от скучных, незаметных, еженедельных действий. Верность в молитве, верность в общении, верность в учении. Дисциплина рождает пробуждение. То, что вы делаете постоянно, создает резонанс, который невозможно игнорировать.
+                       </p>
+                   </div>
+               </div>
+
+               <!-- 4. GRAVITY -->
+               <div class="content-slide">
+                   <span class="scripture-ref">Иоанна 12:32 • Деяния 6:3</span>
+                   <h2>Природа Влияния</h2>
+
+                   <div class="block-title">Наблюдение</div>
+                   <p class="text-body">
+                       Частицы притягиваются к массе. Вы не бегаете за каждой частицей, пытаясь поставить её на место. Вы просто удерживаете «вес» (палец) в центре, и система сама выстраивается вокруг вас в орбиты.
+                   </p>
+
+                   <div class="highlight-box">
+                       <span class="principle-title" style="color:var(--accent-blue)">Принцип Лидерства:</span>
+                       <p class="text-body" style="font-size: 17px;">
+                           Многие лидеры истощают себя, «бегая» за людьми, уговаривая их служить или жертвовать. Это позиция слабости.
+                           <br><br>
+                           Закон духовной гравитации гласит: наращивайте свою «массу» во Христе. Ищите Его лица, наполняйтесь Словом, живите в святости. Когда в вас будет вес Славы Божьей, люди сами придут. Люди ищут не программы, они ищут присутствия Божьего в лидере. Станьте этим центром, и хаос превратится в орбиту.
+                       </p>
+                   </div>
+               </div>
+
+               <!-- 5. TENSION -->
+               <div class="content-slide">
+                   <span class="scripture-ref">1 Коринфянам 12:26 • Ефесянам 4:3</span>
+                   <h2>Цена Единства</h2>
+
+                   <div class="block-title">Наблюдение</div>
+                   <p class="text-body">
+                       Сетка — это связи в Теле Христовом. Все узлы соединены. Вы не можете потянуть за один край (надавить на одну группу людей), чтобы это не почувствовали на другом краю. Система держит нагрузку, но до определенного предела.
+                   </p>
+
+                   <div class="danger-box">
+                       <span class="principle-title" style="color:var(--danger)">Предупреждение:</span>
+                       <p class="text-body" style="font-size: 17px;">
+                           Резкое движение рвет связь. В физической симуляции связь исчезает навсегда. В жизни — восстановить разорванное доверие почти невозможно.
+                           <br><br>
+                           Церковь — это организм, а не механизм. Вы не можете менять людей как шестеренки. Берегите отношения больше, чем «эффективность» проектов. Любая ваша резкость, гнев или манипуляция создают микроразрывы в ткани Тела, которые приведут к падению всей структуры.
+                       </p>
+                   </div>
+               </div>
+           
+           </div>
        </div>
    </div>
 
@@ -232,10 +309,14 @@ const app = {
        window.addEventListener('resize', () => this.resize());
        this.setSlide(0);
        this.loop();
-       document.getElementById('info-panel').addEventListener('click', (e) => {
-           if(e.target.id === 'info-panel') togglePanel();
-       });
-       setTimeout(() => togglePanel(), 800);
+       
+       // Panel toggle on header tap too
+       document.querySelector('.title-block').addEventListener('click', () => togglePanel());
+       
+       // Auto open hint
+       setTimeout(() => {
+            document.getElementById('info-panel').classList.add('panel-visible');
+       }, 800);
    },
 
    resize() {
@@ -249,10 +330,10 @@ const app = {
        this.idx = i;
        document.querySelectorAll('.content-slide').forEach((el, k) => el.classList.toggle('active', k === i));
        
-       const labels = ["I. Смирение", "II. Поток", "III. Верность", "IV. Влияние", "V. Единство"];
+       const labels = ["Глава I: Смирение", "Глава II: Поток", "Глава III: Верность", "Глава IV: Влияние", "Глава V: Единство"];
        document.getElementById('slide-label').innerText = labels[i];
        
-       const hints = ["Нажмите для старта", "Проведите пальцем", "Ведите от центра", "Удерживайте палец", "Тяните узел"];
+       const hints = ["Нажмите для сброса", "Проведите пальцем", "Ведите от центра", "Удерживайте палец", "Тяните узел"];
        const hOverlay = document.getElementById('hint-overlay');
        document.getElementById('hint-text').innerText = hints[i];
        hOverlay.style.opacity = '1';
@@ -274,25 +355,21 @@ const app = {
 
 function togglePanel() { document.getElementById('info-panel').classList.toggle('panel-visible'); }
 
-// --- FIXED PHYSICS ENGINES (High Contrast for Light Theme) ---
+/* --- PHYSICS (High Visibility Mode) --- */
 
 class ChaosSim {
    constructor(w,h){this.w=w;this.h=h;this.init(); document.addEventListener('click',this.c=()=>this.init());}
    init(){
        this.p=[]; for(let i=0;i<60;i++) this.p.push({
            a1:1.57+(i*0.0002), a2:1.57, v1:0, v2:0,
-           c:`rgba(41, 128, 185, ${0.4 + (i/100)})` // Dark Blue, Opaque
+           c:`rgba(44, 62, 80, ${0.3 + (i/80)})` // Dark Slate
        });
        this.cx=this.w/2; this.cy=this.h/3;
    }
    resize(w,h){this.w=w;this.h=h;this.cx=w/2;this.cy=h/3;}
    update(ctx){
-       // White fade out
-       ctx.fillStyle='rgba(255, 255, 255, 0.2)'; ctx.fillRect(0,0,this.w,this.h);
-       
-       // Ensure standard blending
+       ctx.fillStyle='rgba(255, 252, 245, 0.25)'; ctx.fillRect(0,0,this.w,this.h); // Warm white fade
        ctx.globalCompositeOperation = 'source-over';
-       
        let g=1, m=10, l=Math.min(this.w,this.h)/4.5;
        this.p.forEach(p=>{
            let d=l*(30-10*Math.cos(2*p.a1-2*p.a2));
@@ -300,27 +377,22 @@ class ChaosSim {
            let a2=(2*Math.sin(p.a1-p.a2)*(p.v1*p.v1*l*20+g*20*Math.cos(p.a1)+p.v2*p.v2*l*10*Math.cos(p.a1-p.a2)))/d;
            p.v1+=a1;p.v2+=a2;p.a1+=p.v1;p.a2+=p.v2;p.v1*=0.99;p.v2*=0.99;
            let x1=l*Math.sin(p.a1)+this.cx,y1=l*Math.cos(p.a1)+this.cy,x2=x1+l*Math.sin(p.a2),y2=y1+l*Math.cos(p.a2);
-           
-           ctx.strokeStyle=p.c; ctx.lineWidth=2;
-           ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+           ctx.strokeStyle=p.c; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
        });
    }
 }
 
 class FlowSim {
    constructor(w,h){
-       this.w=w;this.h=h;
-       this.p=Array(600).fill().map(()=>this.r());
+       this.w=w;this.h=h; this.pts=Array(500).fill().map(()=>this.r());
        this.m={x:-999,y:-999};this.ev=e=>this.m=gp(e);
        window.addEventListener('mousemove',this.ev);window.addEventListener('touchmove',this.ev);
    }
    r(){return{x:Math.random()*this.w,y:Math.random()*this.h,vx:0,vy:0,l:Math.random()*100}}
    resize(w,h){this.w=w;this.h=h;}
    update(ctx){
-       ctx.fillStyle='rgba(255, 255, 255, 0.3)'; ctx.fillRect(0,0,this.w,this.h);
-       ctx.globalCompositeOperation = 'source-over'; // Crucial for visibility on white
-       
-       this.p.forEach(p=>{
+       ctx.fillStyle='rgba(255, 255, 255, 0.25)'; ctx.fillRect(0,0,this.w,this.h);
+       this.pts.forEach(p=>{
            let a=(Math.cos(p.x*0.005)+Math.sin(p.y*0.005)*3)*2, dx=this.m.x-p.x, dy=this.m.y-p.y;
            let fx=Math.cos(a), fy=Math.sin(a);
            if(dx*dx+dy*dy<20000){fx+=dx*0.015;fy+=dy*0.015;}
@@ -328,8 +400,8 @@ class FlowSim {
            if(p.l<0||p.x<0||p.x>this.w||p.y<0||p.y>this.h)Object.assign(p,this.r());
            
            let v=Math.abs(p.vx)+Math.abs(p.vy);
-           // Deep Teal/Blue colors
-           ctx.fillStyle=`rgba(41, 128, 185, ${0.5 + v/10})`;
+           // Deep Ocean Blue
+           ctx.fillStyle=`rgba(41, 128, 185, ${0.6 + v/10})`;
            ctx.beginPath(); ctx.arc(p.x,p.y,2,0,6.28); ctx.fill();
        });
    }
@@ -344,16 +416,15 @@ class ResonanceSim {
    }
    resize(w,h){this.w=w;this.h=h;}
    update(ctx){
-       ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(0,0,this.w,this.h);
-       ctx.globalCompositeOperation = 'source-over';
+       ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.fillRect(0,0,this.w,this.h);
        ctx.save();ctx.translate(this.w/2,this.h/2);
        this.p.forEach(p=>p.a+=p.s);
        for(let i=0;i<this.sym;i++){
            ctx.rotate((Math.PI*2)/this.sym);
            this.p.forEach(p=>{
                let x=Math.cos(p.a)*p.r,y=Math.sin(p.a)*p.r;
-               ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(x,y,3,0,6.28); ctx.fill();
-               ctx.strokeStyle=p.c; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(0,0); ctx.stroke();
+               ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(x,y,3.5,0,6.28); ctx.fill();
+               ctx.strokeStyle=p.c; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(0,0); ctx.stroke();
            });
        }
        ctx.restore();
@@ -365,7 +436,7 @@ class GravitySim {
        this.w=w;this.h=h;
        this.p=Array(300).fill().map(()=>({
            x:Math.random()*w,y:Math.random()*h,vx:0,vy:0,
-           c: Math.random()>0.5 ? '#2980b9' : '#b7950b' // Gold & Blue
+           c: Math.random()>0.5 ? '#2c3e50' : '#b7950b' // Dark Blue & Gold
        }));
        this.a=false;this.m={x:0,y:0};
        this.d=e=>{this.a=true;this.m=gp(e);};this.mv=e=>{if(this.a)this.m=gp(e);};this.u=()=>this.a=false;
@@ -376,7 +447,6 @@ class GravitySim {
    resize(w,h){this.w=w;this.h=h;}
    update(ctx){
        ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(0,0,this.w,this.h);
-       ctx.globalCompositeOperation = 'source-over';
        this.p.forEach(p=>{
            if(this.a){let dx=this.m.x-p.x,dy=this.m.y-p.y,d=Math.max(1000,dx*dx+dy*dy),f=1200/d;p.vx+=(dx*f)/Math.sqrt(d);p.vy+=(dy*f)/Math.sqrt(d);}
            p.x+=p.vx;p.y+=p.vy;p.vx*=0.99;p.vy*=0.99;if(p.x<0)p.x=this.w;if(p.x>this.w)p.x=0;if(p.y<0)p.y=this.h;if(p.y>this.h)p.y=0;
@@ -391,7 +461,6 @@ class FabricSim {
    resize(w,h){this.w=w;this.h=h;this.i();}
    update(ctx){
        ctx.clearRect(0,0,this.w,this.h);
-       ctx.globalCompositeOperation = 'source-over';
        this.p.forEach(p=>{if(p.pin||p===this.d)return;let vx=(p.x-p.ox)*0.95,vy=(p.y-p.oy)*0.95;p.ox=p.x;p.oy=p.y;p.x+=vx;p.y+=vy+0.2;});
        for(let i=0;i<3;i++)this.s.forEach(s=>{if(!s.ok)return;let dx=s.b.x-s.a.x,dy=s.b.y-s.a.y,d=Math.hypot(dx,dy);if(d>s.l*4)s.ok=false;let df=s.l-d,pc=df/d/2,ox=dx*pc,oy=dy*pc;if(!s.a.pin&&s.a!==this.d){s.a.x-=ox;s.a.y-=oy}if(!s.b.pin&&s.b!==this.d){s.b.x+=ox;s.b.y+=oy}});
        ctx.lineWidth=2;
