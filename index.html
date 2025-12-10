@@ -1,663 +1,539 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Физика Служения: Итоги</title>
-    
-    <!-- META -->
-    <meta name="theme-color" content="#fdfbf7">
-    <meta property="og:title" content="Физика Служения">
-    <meta property="og:description" content="Интерактивная проповедь о принципах лидерства.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <title>Физика Служения: Проповедь</title>
+   
+   <meta name="theme-color" content="#fdfbf7">
+   <meta property="og:title" content="Физика Служения">
+   <meta property="og:description" content="Физические законы и духовные принципы лидерства.">
+   
+   <!-- FONTS -->
+   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+   
+   <style>
+       :root {
+           --bg: #fdfbf7;
+           --glass: rgba(255, 255, 255, 0.96);
+           --text: #1a252f;
+           --accent: #b7950b; /* Gold */
+           --secondary: #34495e;
+           --highlight: #2980b9; /* Blue */
+           --danger: #c0392b;
+           --shadow: 0 10px 30px rgba(0,0,0,0.1);
+       }
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-gradient: radial-gradient(circle at 50% 10%, #fffcf5, #f0f4f8);
-            --glass-bg: rgba(255, 255, 255, 0.96);
-            --glass-border: rgba(200, 200, 200, 0.5);
-            --text-primary: #1a252f;
-            --text-body: #2c3e50;
-            --accent-gold: #b7950b;
-            --accent-blue: #2980b9;
-            --danger: #c0392b;
-            --safe-area-bottom: env(safe-area-inset-bottom);
-        }
+       * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+       body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width: 100vw; }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            margin: 0;
-            background: var(--bg-gradient);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
-        }
+       /* CANVAS */
+       #canvas-layer { position: absolute; inset: 0; z-index: 1; }
+       canvas { display: block; width: 100%; height: 100%; }
 
-        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        canvas { display: block; width: 100%; height: 100%; touch-action: none; }
-        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
+       /* UI LAYER */
+       #ui-layer { position: absolute; inset: 0; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; }
 
-        /* HEADER */
-        .header {
-            position: absolute; top: 0; left: 0; width: 100%; padding: 20px;
-            display: flex; justify-content: space-between; align-items: flex-start;
-            pointer-events: none;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
-            z-index: 20;
-        }
-        
-        .title-block { pointer-events: auto; }
-        .title-block h1 {
-            font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; margin: 0;
-            color: var(--text-primary); letter-spacing: 1px;
-        }
-        .title-block span {
-            font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
-            color: var(--accent-gold); font-weight: 700; display: block; margin-top: 4px;
-        }
+       /* HEADER */
+       .header {
+           padding: 20px; display: flex; justify-content: center; align-items: flex-start;
+           background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
+           pointer-events: none;
+       }
+       .title-badge {
+           background: #fff; padding: 8px 20px; border-radius: 30px;
+           box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);
+           text-align: center; pointer-events: auto;
+       }
+       .title-badge h1 { font-family: 'Cinzel', serif; font-size: 14px; margin: 0; letter-spacing: 1px; color: var(--text); }
+       .title-badge span { font-size: 10px; text-transform: uppercase; color: var(--accent); font-weight: 700; display: block; }
 
-        .info-toggle {
-            pointer-events: auto; background: #fff; border: 1px solid var(--glass-border);
-            color: var(--text-body); width: 44px; height: 44px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s;
-        }
-        .info-toggle:active { transform: scale(0.95); }
+       /* NAVIGATION ARROWS */
+       .nav-btn {
+           position: absolute; top: 50%; transform: translateY(-50%);
+           width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.8);
+           border: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center;
+           cursor: pointer; pointer-events: auto; box-shadow: var(--shadow); color: var(--secondary);
+           transition: all 0.2s; z-index: 20;
+       }
+       .nav-btn:active { transform: translateY(-50%) scale(0.95); background: #fff; }
+       .nav-prev { left: 20px; }
+       .nav-next { right: 20px; }
 
-        /* NAV ZONES */
-        .nav-zone {
-            position: absolute; top: 0; height: 100%; width: 15%; 
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; pointer-events: auto; z-index: 5; 
-        }
-        .nav-zone:active { background: rgba(0,0,0,0.03); }
-        .nav-left { left: 0; }
-        .nav-right { right: 0; }
-        
-        .nav-icon {
-            width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.9);
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); opacity: 0; transition: opacity 0.3s;
-            color: var(--text-body);
-        }
-        .nav-zone:hover .nav-icon { opacity: 1; }
-        .nav-zone:active .nav-icon { opacity: 1; }
+       /* BIG ACTION BUTTON (READ) */
+       .read-btn-container {
+           position: absolute; bottom: 40px; left: 0; width: 100%;
+           display: flex; justify-content: center; pointer-events: none; z-index: 20;
+           transition: transform 0.3s;
+       }
+       .read-btn {
+           background: var(--text); color: #fff; padding: 14px 32px; border-radius: 50px;
+           font-family: 'Cinzel', serif; font-weight: 600; letter-spacing: 1px; font-size: 14px;
+           box-shadow: 0 10px 25px rgba(44, 62, 80, 0.3); cursor: pointer; pointer-events: auto;
+           display: flex; align-items: center; gap: 10px; transition: transform 0.2s;
+       }
+       .read-btn:active { transform: scale(0.95); }
+       .read-btn.hidden { transform: translateY(100px); opacity: 0; }
 
-        /* PANEL */
-        .info-panel {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background: var(--glass-bg); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border-top: 1px solid var(--glass-border); padding: 0;
-            pointer-events: auto; transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-            max-height: 85vh; overflow-y: auto; border-radius: 24px 24px 0 0;
-            transform: translateY(100%); z-index: 60;
-            box-shadow: 0 -10px 60px rgba(0,0,0,0.12);
-            display: flex; flex-direction: column;
-        }
-        .panel-visible { transform: translateY(0); }
+       /* CONTENT PANEL */
+       .panel {
+           position: absolute; bottom: 0; left: 0; width: 100%; height: 85vh;
+           background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+           border-top: 1px solid rgba(0,0,0,0.1); border-radius: 24px 24px 0 0;
+           transform: translateY(110%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+           pointer-events: auto; z-index: 50; display: flex; flex-direction: column;
+           box-shadow: 0 -20px 60px rgba(0,0,0,0.15);
+       }
+       .panel.open { transform: translateY(0); }
 
-        .panel-handle {
-            width: 100%; height: 30px; display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; flex-shrink: 0; background: rgba(255,255,255,0.5);
-        }
-        .panel-handle-bar { width: 40px; height: 4px; background: rgba(0,0,0,0.15); border-radius: 2px; }
+       .panel-header {
+           padding: 20px; display: flex; justify-content: flex-end; border-bottom: 1px solid rgba(0,0,0,0.05);
+       }
+       .close-btn {
+           background: rgba(0,0,0,0.05); border: none; width: 36px; height: 36px; border-radius: 50%;
+           display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text);
+       }
 
-        .panel-content {
-            padding: 30px;
-            padding-bottom: max(60px, var(--safe-area-bottom));
-        }
+       .panel-content {
+           padding: 10px 30px 40px 30px; overflow-y: auto; flex-grow: 1;
+       }
 
-        .content-slide { display: none; animation: fadeIn 0.6s ease; }
-        .content-slide.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+       /* TEXT STYLING */
+       .slide-content { display: none; animation: fadeIn 0.5s; }
+       .slide-content.active { display: block; }
+       @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* TYPOGRAPHY & LAYOUT */
-        h2 { 
-            font-family: 'Cinzel', serif; font-size: 28px; margin: 0 0 10px 0; color: var(--text-primary); 
-            border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 20px; margin-bottom: 25px;
-        }
-        .scripture-block {
-            font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic;
-            color: var(--text-body); background: #fdfbf7; padding: 20px;
-            border-left: 3px solid var(--accent-gold); margin-bottom: 25px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
-        .scripture-ref {
-            display: block; font-family: 'Inter', sans-serif; font-size: 11px; font-style: normal;
-            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-            color: var(--accent-gold); margin-top: 8px; text-align: right;
-        }
+       h2 {
+           font-family: 'Cinzel', serif; font-size: 28px; color: var(--text);
+           margin: 0 0 10px 0; padding-bottom: 15px; border-bottom: 2px solid var(--accent);
+       }
 
-        .sermon-section { margin-bottom: 25px; }
-        .section-header {
-            font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800;
-            color: #95a5a6; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
-        }
-        .section-header i { font-size: 14px; }
-        
-        .text-body {
-            font-size: 16px; line-height: 1.6; color: var(--text-body); margin: 0;
-        }
-        
-        .question-box {
-            background: rgba(41, 128, 185, 0.05); border-radius: 12px; padding: 20px;
-            border: 1px solid rgba(41, 128, 185, 0.2); margin-top: 30px;
-        }
-        .question-text {
-            font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600;
-            color: var(--accent-blue); text-align: center; font-style: italic;
-        }
+       .scripture-box {
+           font-family: 'Cormorant Garamond', serif; font-size: 22px; line-height: 1.4;
+           font-style: italic; color: #444; background: #fff; padding: 20px;
+           border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+       }
+       .ref {
+           display: block; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+           text-transform: uppercase; color: var(--accent); margin-top: 10px; text-align: right; font-style: normal;
+       }
 
-        /* SUMMARY LIST */
-        .summary-list { list-style: none; padding: 0; margin: 0; }
-        .summary-list li {
-            margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.05);
-            display: flex; align-items: flex-start; gap: 15px; color: var(--text-body);
-        }
-        .summary-num { font-family: 'Cinzel', serif; font-weight: 700; color: var(--accent-gold); min-width: 25px;}
-        
-        /* HINT */
-        .hint-overlay {
-            position: absolute; bottom: 120px; width: 100%; text-align: center;
-            pointer-events: none; opacity: 0; transition: opacity 0.5s; z-index: 5;
-        }
-        .hint-bubble {
-            display: inline-block; background: #fff; padding: 12px 24px;
-            border-radius: 30px; font-size: 13px; color: var(--text-primary);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1); font-weight: 600;
-            transform: translateY(0); animation: float 2s infinite ease-in-out;
-        }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+       .law-section { margin-bottom: 30px; }
+       .law-label {
+           font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;
+           color: #95a5a6; margin-bottom: 8px; display: block;
+       }
+       .law-text {
+           font-family: 'Cormorant Garamond', serif; font-size: 19px; line-height: 1.6; color: var(--secondary); margin: 0; font-weight: 500;
+       }
+       
+       .physics-tag { color: var(--highlight); }
+       .god-tag { color: var(--accent); }
 
-        /* DESKTOP */
-        @media (min-width: 1024px) {
-            .info-panel {
-                width: 550px; right: 40px; left: auto; top: 50%; bottom: auto;
-                transform: translate(120%, -50%); height: auto; max-height: 90vh;
-                border: 1px solid var(--glass-border); border-radius: 16px;
-            }
-            .panel-visible { transform: translate(0, -50%); }
-            .nav-zone { width: 80px; }
-            .nav-icon { opacity: 0; }
-            .nav-zone:hover .nav-icon { opacity: 1; }
-            .panel-handle { display: none; }
-            .hint-overlay { bottom: 40px; }
-        }
-        
-        /* TABLET PORTRAIT */
-        @media (min-width: 768px) and (max-width: 1023px) {
-            .info-panel { max-height: 65vh; }
-            .nav-zone { width: 100px; }
-        }
-    </style>
+       /* HINT OVERLAY */
+       .hint-overlay {
+           position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+           pointer-events: none; opacity: 0; transition: opacity 0.5s;
+       }
+       .hint-text {
+           background: rgba(255,255,255,0.9); padding: 12px 24px; border-radius: 30px;
+           font-size: 14px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+           color: var(--text); letter-spacing: 0.5px;
+       }
+
+       /* DESKTOP */
+       @media (min-width: 1024px) {
+           .panel {
+               width: 500px; right: 40px; left: auto; top: 50%; bottom: auto; height: 85vh;
+               transform: translate(120%, -50%); border-radius: 20px; border: 1px solid rgba(0,0,0,0.1);
+           }
+           .panel.open { transform: translate(0, -50%); }
+           .read-btn-container { bottom: 50px; }
+           .nav-prev { left: 40px; }
+           .nav-next { right: 40px; }
+       }
+   </style>
 </head>
 <body>
 
-    <div id="canvas-container">
-        <canvas id="main-canvas"></canvas>
-    </div>
+   <div id="canvas-layer">
+       <canvas id="c"></canvas>
+   </div>
 
-    <div id="ui-layer">
-        
-        <div class="header">
-            <div class="title-block">
-                <h1>Физика Служения</h1>
-                <span id="slide-label">Введение</span>
-            </div>
-            <button class="info-toggle" onclick="togglePanel()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16v-4M12 8h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </button>
-        </div>
+   <div id="ui-layer">
+       <div class="header">
+           <div class="title-badge">
+               <h1>Физика Служения</h1>
+               <span id="slide-num">Глава I</span>
+           </div>
+       </div>
 
-        <div class="nav-zone nav-left" onclick="app.prev(event)">
-            <div class="nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>
-        </div>
-        <div class="nav-zone nav-right" onclick="app.next(event)">
-            <div class="nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
-        </div>
+       <!-- Navigation Buttons -->
+       <div class="nav-btn nav-prev" onclick="app.prev()">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+       </div>
+       <div class="nav-btn nav-next" onclick="app.next()">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+       </div>
 
-        <div class="hint-overlay" id="hint-overlay">
-            <div class="hint-bubble" id="hint-text">Нажмите для старта</div>
-        </div>
+       <!-- Hint -->
+       <div class="hint-overlay" id="hint">
+           <div class="hint-text">Нажмите, чтобы начать</div>
+       </div>
 
-        <div class="info-panel" id="info-panel">
-            <div class="panel-handle" onclick="togglePanel()">
-                 <div class="panel-handle-bar"></div>
-            </div>
-            
-            <div class="panel-content">
-                
-                <!-- 1. SOWER (WIND) -->
-                <div class="content-slide active">
-                    <h2>I. Сеятель и Ветер</h2>
-                    
-                    <div class="scripture-block">
-                        «Я насадил, Аполлос поливал, но возрастил Бог...»
-                        <span class="scripture-ref">1 Коринфянам 3:6</span>
-                    </div>
+       <!-- Main Action Button -->
+       <div class="read-btn-container" id="read-btn-container">
+           <div class="read-btn" onclick="app.togglePanel(true)">
+               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+               ЧИТАТЬ СУТЬ
+           </div>
+       </div>
 
-                    <div class="sermon-section">
-                        <div class="section-header">👀 Визуализация</div>
-                        <p class="text-body">
-                            Нажмите на экран, чтобы «сеять» (выпускать частицы). Ваша цель — создать прямую линию. Но посмотрите: невидимый <b>Ветер</b> (случайная сила) постоянно меняет их траекторию. Вы контролируете только момент выпуска, но не место падения.
-                        </p>
-                    </div>
+       <!-- Content Panel -->
+       <div class="panel" id="panel">
+           <div class="panel-header">
+               <button class="close-btn" onclick="app.togglePanel(false)">
+                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+               </button>
+           </div>
+           <div class="panel-content">
+               
+               <!-- 1. SOWER -->
+               <div class="slide-content active">
+                   <h2>I. Сеятель и Ветер</h2>
+                   
+                   <div class="law-section">
+                       <span class="law-label physics-tag"><i class="fa-solid fa-wind"></i> Закон Физики: Хаос</span>
+                       <p class="law-text">
+                           Наблюдайте за экраном. Вы нажимаете («сеете»), пытаясь создать прямую линию. Но невидимая сила (Ветер) отклоняет траекторию каждой частицы. В сложных системах невозможно контролировать результат, можно контролировать только начальный импульс (посев).
+                       </p>
+                   </div>
 
-                    <div class="sermon-section">
-                        <div class="section-header">🩺 Проблема</div>
-                        <p class="text-body">
-                            Лидерский невроз — это попытка контролировать ветер. Мы расстраиваемся, когда люди уходят или проекты идут не по плану. Мы думаем, что если мы все сделали правильно (насадили), то результат обязан быть идеальным.
-                        </p>
-                    </div>
+                   <div class="law-section">
+                       <span class="law-label god-tag"><i class="fa-solid fa-cross"></i> Закон Божий</span>
+                       <div class="scripture-box">
+                           «Я насадил, Аполлос поливал, но возрастил Бог...»
+                           <span class="ref">1 Коринфянам 3:6</span>
+                       </div>
+                       <p class="law-text">
+                           Лидерская гордость — это попытка контролировать Ветер (Духа Святого или обстоятельства). Мы паникуем, когда планы рушатся. Но Бог напоминает: <b>твоя ответственность — качество семени и верность в посеве. Моя ответственность — направление ветра и урожай.</b> Отпустите контроль над результатом.
+                       </p>
+                   </div>
+               </div>
 
-                    <div class="sermon-section">
-                        <div class="section-header">💊 Решение</div>
-                        <p class="text-body">
-                            Примите свою роль. Вы — сеятель, а не «возраститель». Ваша ответственность — качество семени и постоянство посева. Ответственность Бога — направление ветра и урожай. Расслабьте руку. Доверьтесь Ветру Духа.
-                        </p>
-                    </div>
-                </div>
+               <!-- 2. FLOW -->
+               <div class="slide-content">
+                   <h2>II. Поток Благодати</h2>
+                   
+                   <div class="law-section">
+                       <span class="law-label physics-tag">Закон Физики: Ламинарность</span>
+                       <p class="law-text">
+                           Это поток жидкости. Когда вы ставите палец, частицы не бьются об него, теряя энергию. Они плавно огибают препятствие, сохраняя скорость. Это принцип наименьшего сопротивления.
+                       </p>
+                   </div>
 
-                <!-- 2. FLOW -->
-                <div class="content-slide">
-                    <h2>II. Поток Благодати</h2>
+                   <div class="law-section">
+                       <span class="law-label god-tag">Закон Божий</span>
+                       <div class="scripture-box">
+                           «Иго Мое благо, и бремя Мое легко.»
+                           <span class="ref">Матфея 11:30</span>
+                       </div>
+                       <p class="law-text">
+                           Многие служители живут в режиме «турбулентности» — постоянного надрыва, конфликтов и тяжести. Мы думаем, что страдание — признак святости. Но если все идет тяжело, возможно, вы идете против Потока Благодати. <b>Не пробивайте стены. Найдите русло, где Бог уже движется, и направьте усилия туда.</b>
+                       </p>
+                   </div>
+               </div>
 
-                    <div class="scripture-block">
-                        «Иго Мое благо, и бремя Мое легко.»
-                        <span class="scripture-ref">Матфея 11:30</span>
-                    </div>
+               <!-- 3. RESONANCE -->
+               <div class="slide-content">
+                   <h2>III. Сила Постоянства</h2>
+                   
+                   <div class="law-section">
+                       <span class="law-label physics-tag">Закон Физики: Резонанс</span>
+                       <p class="law-text">
+                           Здесь нет сложного рисунка. Есть одна простая точка и правило симметрии (повторения). Одно малое действие, повторенное многократно по кругу, создает величественный и прочный узор.
+                       </p>
+                   </div>
 
-                    <div class="sermon-section">
-                        <div class="section-header">👀 Визуализация</div>
-                        <p class="text-body">
-                            Это стая. Когда вы ставите палец, частицы не разбиваются об него. Они <b>обтекают</b> препятствие, сохраняя скорость. Вы не ломаете поток, вы создаете новое русло.
-                        </p>
-                    </div>
+                   <div class="law-section">
+                       <span class="law-label god-tag">Закон Божий</span>
+                       <div class="scripture-box">
+                           «Верный в малом и во многом верен.»
+                           <span class="ref">Луки 16:10</span>
+                       </div>
+                       <p class="law-text">
+                           Мы ищем «секретные стратегии» для взрывного роста церкви. Но Царство строится на скучных, незаметных привычках. Ежедневная молитва. Еженедельная подготовка. Дисциплина рождает пробуждение. <b>Ваша верность в малом создает духовный резонанс, который меняет города.</b>
+                       </p>
+                   </div>
+               </div>
 
-                    <div class="sermon-section">
-                        <div class="section-header">🩺 Проблема</div>
-                        <p class="text-body">
-                            Мы часто путаем «жертвенность» с «надрывом». Если служение вызывает постоянную боль, конфликты и скрежет — вы стали плотиной на пути реки, а не руслом.
-                        </p>
-                    </div>
+               <!-- 4. GRAVITY -->
+               <div class="slide-content">
+                   <h2>IV. Природа Влияния</h2>
+                   
+                   <div class="law-section">
+                       <span class="law-label physics-tag">Закон Физики: Гравитация</span>
+                       <p class="law-text">
+                           В космосе планеты не «гоняются» за спутниками. Они просто обладают огромной массой, и спутники сами выходят на орбиту. Чем больше масса центра, тем больше объектов он удерживает.
+                       </p>
+                   </div>
 
-                    <div class="sermon-section">
-                        <div class="section-header">💊 Решение</div>
-                        <p class="text-body">
-                            Ищите легкость. Не в смысле лени, а в смысле отсутствия трения. Направляйте людей туда, где им естественно течь (их дары), а не туда, где вам нужно заткнуть дыру.
-                        </p>
-                    </div>
-                </div>
+                   <div class="law-section">
+                       <span class="law-label god-tag">Закон Божий</span>
+                       <div class="scripture-box">
+                           «...Всех привлеку к Себе.»
+                           <span class="ref">Иоанна 12:32</span>
+                       </div>
+                       <p class="law-text">
+                           Перестаньте бегать за людьми, уговаривая их служить или жертвовать. Это позиция слабости. Наращивайте свою духовную «массу» (близость с Богом, Слово, характер). <b>Если в вас будет вес Славы Божьей, люди сами придут к Свету.</b> Занимайтесь глубиной, а Бог займется широтой.
+                       </p>
+                   </div>
+               </div>
 
-                <!-- 3. RESONANCE -->
-                <div class="content-slide">
-                    <h2>III. Сила Верности</h2>
+               <!-- 5. TENSION -->
+               <div class="slide-content">
+                   <h2>V. Цена Единства</h2>
+                   
+                   <div class="law-section">
+                       <span class="law-label physics-tag">Закон Физики: Натяжение</span>
+                       <p class="law-text">
+                           Эта сетка едина. Натяжение одного узла меняет цвет всей структуры (от зеленого к красному). Если потянуть слишком резко, связь лопается и исчезает навсегда.
+                       </p>
+                   </div>
 
-                    <div class="scripture-block">
-                        «Верный в малом и во многом верен.»
-                        <span class="scripture-ref">Луки 16:10</span>
-                    </div>
+                   <div class="law-section">
+                       <span class="law-label god-tag">Закон Божий</span>
+                       <div class="scripture-box">
+                           «...Страдает ли один член, страдают с ним все.»
+                           <span class="ref">1 Коринфянам 12:26</span>
+                       </div>
+                       <p class="law-text">
+                           Церковь — это организм. Вы не можете надавить на волонтеров ради «эффективности», не повредив ткань отношений. Резкое слово, манипуляция или гнев создают разрывы в доверии. <b>Отношения важнее проектов.</b> Будьте нежны с Телом Христа.
+                       </p>
+                   </div>
+               </div>
 
-                    <div class="sermon-section">
-                        <div class="section-header">👀 Визуализация</div>
-                        <p class="text-body">
-                            Одно простое действие, повторенное многократно по кругу, создает величественный Храм. Красота рождается не из сложности, а из <b>повторения</b>.
-                        </p>
-                    </div>
+               <!-- 6. FINALE -->
+               <div class="slide-content">
+                   <h2>Итог: Покой Лидера</h2>
+                   <div style="text-align: center; margin-top: 40px;">
+                       <p class="law-text" style="font-style: italic;">
+                           Мы сеем, но растит Бог.<br>
+                           Мы служим, но спасает Христос.<br>
+                           Мы ведем, но Пастырь — Он.
+                       </p>
+                       <div style="margin-top: 30px; font-size: 14px; color: #b7950b;">
+                           Наблюдайте за фимиамом.<br>Мир вам.
+                       </div>
+                   </div>
+               </div>
 
-                    <div class="sermon-section">
-                        <div class="section-header">💊 Решение</div>
-                        <p class="text-body">
-                            Здоровье церкви зависит от скучных привычек: молитва, подготовка, общение. Дисциплина рождает пробуждение. Найдите свой простой ритм и держите его годами.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 4. GRAVITY -->
-                <div class="content-slide">
-                    <h2>IV. Природа Влияния</h2>
-
-                    <div class="scripture-block">
-                        «...Всех привлеку к Себе.»
-                        <span class="scripture-ref">Иоанна 12:32</span>
-                    </div>
-
-                    <div class="sermon-section">
-                        <div class="section-header">👀 Визуализация</div>
-                        <p class="text-body">
-                            Частицы притягиваются к массе. Вы не бегаете за ними, вы удерживаете вес в центре, и они выходят на <b>орбиту</b>. Если ваша масса исчезнет, система рассыпется.
-                        </p>
-                    </div>
-
-                    <div class="sermon-section">
-                        <div class="section-header">💊 Решение</div>
-                        <p class="text-body">
-                            Перестаньте бегать за людьми и уговаривать их служить. Наращивайте свою духовную массу (близость с Богом). Люди ищут присутствия Божьего. Станьте носителем Славы, и люди сами придут к Свету.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 5. TENSION -->
-                <div class="content-slide">
-                    <h2>V. Цена Единства</h2>
-
-                    <div class="scripture-block">
-                        «...Страдает ли один член, страдают с ним все.»
-                        <span class="scripture-ref">1 Коринфянам 12:26</span>
-                    </div>
-
-                    <div class="sermon-section">
-                        <div class="section-header">👀 Визуализация</div>
-                        <p class="text-body">
-                            Это ткань Тела. Натяжение одного узла окрашивает в красный цвет соседние. Мы все связаны. Резкий рывок (гнев, давление) рвет связь навсегда.
-                        </p>
-                    </div>
-
-                    <div class="sermon-section">
-                        <div class="section-header">💊 Решение</div>
-                        <p class="text-body">
-                            Отношения важнее проектов. Вы не можете «отжать» эффективность, не повредив ткань доверия. Будьте нежны с Телом Христа.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 6. CONCLUSION -->
-                <div class="content-slide">
-                    <h2>Итоги: Сердце Лидера</h2>
-                    
-                    <div class="scripture-block">
-                        «Остановитесь и познайте, что Я — Бог.»
-                        <span class="scripture-ref">Псалом 45:11</span>
-                    </div>
-
-                    <ul class="summary-list">
-                        <li>
-                            <span class="summary-num">I.</span>
-                            <div><b>Сеятель:</b> Мы отвечаем за труд, Бог — за результат.</div>
-                        </li>
-                        <li>
-                            <span class="summary-num">II.</span>
-                            <div><b>Поток:</b> Ищите благодать, а не сопротивление.</div>
-                        </li>
-                        <li>
-                            <span class="summary-num">III.</span>
-                            <div><b>Резонанс:</b> Верность в малом строит великое.</div>
-                        </li>
-                        <li>
-                            <span class="summary-num">IV.</span>
-                            <div><b>Гравитация:</b> Притягивайте Христа, и люди придут.</div>
-                        </li>
-                        <li>
-                            <span class="summary-num">V.</span>
-                            <div><b>Ткань:</b> Берегите единство больше эффективности.</div>
-                        </li>
-                    </ul>
-
-                    <div class="sermon-section" style="margin-top: 30px;">
-                        <p class="text-body" style="text-align: center; font-style: italic;">
-                            Наблюдайте за фимиамом молитвы на экране. Пусть суета утихнет.<br>
-                            Мир вам.
-                        </p>
-                    </div>
-                </div>
-            
-            </div>
-        </div>
-    </div>
+           </div>
+       </div>
+   </div>
 
 <script>
 const app = {
-    idx: 0, w: 0, h: 0, sim: null,
-    canvas: document.getElementById('main-canvas'),
-    ctx: document.getElementById('main-canvas').getContext('2d'),
-    
-    init() {
-        this.resize();
-        window.addEventListener('resize', () => this.resize());
-        this.setSlide(0);
-        this.loop();
-        document.querySelector('.title-block').addEventListener('click', () => togglePanel());
-        
-        // Auto open panel
-        setTimeout(() => {
-             document.getElementById('info-panel').classList.add('panel-visible');
-        }, 800);
-    },
+   idx: 0, w: 0, h: 0, sim: null,
+   c: document.getElementById('c'),
+   ctx: document.getElementById('c').getContext('2d'),
+   
+   init() {
+       this.resize();
+       window.addEventListener('resize', () => this.resize());
+       this.setSlide(0);
+       this.loop();
+       
+       // Auto open panel first time logic
+       setTimeout(() => {
+            this.togglePanel(true);
+       }, 600);
+   },
 
-    resize() {
-        this.w = window.innerWidth; this.h = window.innerHeight;
-        const dpr = window.devicePixelRatio || 1;
-        this.canvas.width = this.w * dpr; 
-        this.canvas.height = this.h * dpr;
-        this.ctx.scale(dpr, dpr);
-        if(this.sim && this.sim.resize) this.sim.resize(this.w, this.h);
-    },
+   resize() {
+       this.w = window.innerWidth; this.h = window.innerHeight;
+       const dpr = window.devicePixelRatio || 1;
+       this.c.width = this.w * dpr; this.c.height = this.h * dpr;
+       this.ctx.scale(dpr, dpr);
+       if(this.sim && this.sim.resize) this.sim.resize(this.w, this.h);
+   },
 
-    setSlide(i) {
-        if(i < 0 || i > 5) return;
-        this.idx = i;
-        document.querySelectorAll('.content-slide').forEach((el, k) => el.classList.toggle('active', k === i));
-        
-        const labels = ["I. Сеятель", "II. Поток", "III. Верность", "IV. Влияние", "V. Единство", "Итоги"];
-        document.getElementById('slide-label').innerText = labels[i];
-        
-        const hints = ["Нажмите, чтобы сеять", "Проведите пальцем", "Ведите от центра", "Удерживайте палец", "Тяните узел", "Покой"];
-        const hOverlay = document.getElementById('hint-overlay');
-        document.getElementById('hint-text').innerText = hints[i];
-        hOverlay.style.opacity = '1';
-        clearTimeout(this.ht);
-        this.ht = setTimeout(() => hOverlay.style.opacity = '0', 3500);
+   togglePanel(forceState) {
+       const p = document.getElementById('panel');
+       const btn = document.getElementById('read-btn-container');
+       const isOpen = forceState !== undefined ? forceState : !p.classList.contains('open');
+       
+       if(isOpen) {
+           p.classList.add('open');
+           btn.querySelector('.read-btn').classList.add('hidden');
+       } else {
+           p.classList.remove('open');
+           btn.querySelector('.read-btn').classList.remove('hidden');
+       }
+   },
 
-        this.sim = null;
-        if(i===0) this.sim = new SowerSim(this.w, this.h); // New Sim
-        if(i===1) this.sim = new FlowSim(this.w, this.h);
-        if(i===2) this.sim = new ResonanceSim(this.w, this.h);
-        if(i===3) this.sim = new GravitySim(this.w, this.h);
-        if(i===4) this.sim = new FabricSim(this.w, this.h);
-        if(i===5) this.sim = new FinaleSim(this.w, this.h); // New Sim
-    },
-    
-    next(e) { if(e)e.stopPropagation(); this.setSlide(this.idx+1); },
-    prev(e) { if(e)e.stopPropagation(); this.setSlide(this.idx-1); },
-    loop() { if(this.sim) this.sim.update(this.ctx); requestAnimationFrame(()=>this.loop()); }
+   setSlide(i) {
+       if(i < 0 || i > 5) return;
+       this.idx = i;
+       document.querySelectorAll('.slide-content').forEach((el, k) => el.classList.toggle('active', k === i));
+       
+       const labels = ["I. Сеятель", "II. Поток", "III. Верность", "IV. Влияние", "V. Единство", "Итоги"];
+       document.getElementById('slide-num').innerText = labels[i];
+       
+       const hints = ["Нажмите, чтобы сеять", "Проведите пальцем", "Ведите от центра", "Удерживайте палец", "Тяните узел", "Покой"];
+       const h = document.querySelector('.hint-text');
+       h.innerText = hints[i];
+       document.getElementById('hint').style.opacity = 1;
+       clearTimeout(this.ht);
+       this.ht = setTimeout(() => document.getElementById('hint').style.opacity = 0, 3500);
+
+       this.sim = null;
+       if(i===0) this.sim = new SowerSim(this.w, this.h);
+       if(i===1) this.sim = new FlowSim(this.w, this.h);
+       if(i===2) this.sim = new ResonanceSim(this.w, this.h);
+       if(i===3) this.sim = new GravitySim(this.w, this.h);
+       if(i===4) this.sim = new FabricSim(this.w, this.h);
+       if(i===5) this.sim = new FinaleSim(this.w, this.h);
+   },
+   
+   next() { this.setSlide(this.idx+1); },
+   prev() { this.setSlide(this.idx-1); },
+   loop() { if(this.sim) this.sim.update(this.ctx); requestAnimationFrame(()=>this.loop()); }
 };
 
-function togglePanel() { document.getElementById('info-panel').classList.toggle('panel-visible'); }
+/* --- ENGINES --- */
 
-/* --- PHYSICS ENGINES --- */
-
-// 1. SOWER & WIND (Replaces Pendulum)
 class SowerSim {
-    constructor(w,h){
-        this.w=w; this.h=h; this.pts=[]; 
-        this.active=false; this.m={x:w/2, y:h/2};
-        this.wind = 0; this.time = 0;
-        
-        this.d=e=>{this.active=true; this.m=gp(e)};
-        this.mv=e=>{if(this.active)this.m=gp(e)};
-        this.u=()=>{this.active=false};
-        
-        window.addEventListener('mousedown',this.d); window.addEventListener('touchstart',this.d);
-        window.addEventListener('mousemove',this.mv); window.addEventListener('touchmove',this.mv);
-        window.addEventListener('mouseup',this.u); window.addEventListener('touchend',this.u);
-    }
-    resize(w,h){this.w=w;this.h=h;}
-    update(ctx){
-        this.time += 0.01;
-        // Dynamic Wind
-        this.wind = Math.sin(this.time) * 1.5 + Math.cos(this.time * 2.3) * 0.5;
-        
-        ctx.fillStyle='rgba(255, 252, 245, 0.2)'; ctx.fillRect(0,0,this.w,this.h);
-        
-        // Visualize Wind Direction
-        ctx.save();
-        ctx.fillStyle = "rgba(0,0,0,0.04)";
-        ctx.font = "bold 200px sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.translate(this.w/2, this.h/2);
-        ctx.fillText(this.wind > 0 ? ">>" : "<<", 0, 0);
-        ctx.restore();
+   constructor(w,h){this.w=w;this.h=h;this.pts=[];this.act=false;this.m={x:w/2,y:h/3};this.t=0;
+   this.d=e=>{this.act=true;this.m=gp(e)};this.mv=e=>{if(this.act)this.m=gp(e)};this.u=()=>{this.act=false};
+   window.addEventListener('mousedown',this.d);window.addEventListener('touchstart',this.d);
+   window.addEventListener('mousemove',this.mv);window.addEventListener('touchmove',this.mv);
+   window.addEventListener('mouseup',this.u);window.addEventListener('touchend',this.u);}
+   resize(w,h){this.w=w;this.h=h;}
+   update(ctx){
+       this.t+=0.01; let wind = Math.sin(this.t)*2;
+       ctx.fillStyle='rgba(253, 251, 247, 0.2)'; ctx.fillRect(0,0,this.w,this.h);
+       
+       ctx.save(); ctx.translate(this.w/2, this.h/2);
+       ctx.fillStyle="rgba(0,0,0,0.03)"; ctx.font="700 150px serif";
+       ctx.textAlign="center"; ctx.textBaseline="middle";
+       ctx.fillText(wind>0?">>>":"<<<", 0, 0); ctx.restore();
 
-        // Spawn seeds if active
-        if(this.active) {
-            for(let k=0; k<5; k++) {
-                this.pts.push({
-                    x: this.m.x + (Math.random()-0.5)*10,
-                    y: this.m.y,
-                    vx: (Math.random()-0.5)*2,
-                    vy: (Math.random()*2) - 1, // Initial burst
-                    life: 150,
-                    c: Math.random()>0.5 ? '#b7950b' : '#2c3e50'
-                });
-            }
-        }
-
-        for(let i=this.pts.length-1; i>=0; i--) {
-            let p = this.pts[i];
-            // Physics: Gravity + Wind
-            p.vy += 0.1; // Gravity
-            p.vx += this.wind * 0.05; // Wind influence
-            p.vx *= 0.99; p.vy *= 0.99;
-            
-            p.x += p.vx; p.y += p.vy;
-            p.life--;
-            
-            ctx.fillStyle = p.c;
-            ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
-            
-            if(p.life <= 0 || p.y > this.h) this.pts.splice(i, 1);
-        }
-    }
+       if(this.act) for(let k=0;k<3;k++) this.pts.push({x:this.m.x+(Math.random()-0.5)*15, y:this.m.y, vx:(Math.random()-0.5)*3, vy:(Math.random()*2), l:300, c:Math.random()>0.5?'#b7950b':'#2c3e50'});
+       
+       for(let i=this.pts.length-1;i>=0;i--){
+           let p=this.pts[i];
+           p.vy+=0.05; p.vx+=wind*0.04; p.vx*=0.98;
+           p.x+=p.vx; p.y+=p.vy; p.l--;
+           ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,3,0,6.28); ctx.fill();
+           if(p.l<=0||p.y>this.h)this.pts.splice(i,1);
+       }
+   }
 }
 
-// 2. FLOW (Fluid)
 class FlowSim {
-    constructor(w,h){
-        this.w=w;this.h=h; this.pts=Array(500).fill().map(()=>this.r());
-        this.m={x:-999,y:-999};this.ev=e=>this.m=gp(e);
-        window.addEventListener('mousemove',this.ev);window.addEventListener('touchmove',this.ev);
-    }
-    r(){return{x:Math.random()*this.w,y:Math.random()*this.h,vx:0,vy:0,l:Math.random()*100}}
-    resize(w,h){this.w=w;this.h=h;}
-    update(ctx){
-        ctx.fillStyle='rgba(255, 255, 255, 0.25)'; ctx.fillRect(0,0,this.w,this.h);
-        this.pts.forEach(p=>{
-            let a=(Math.cos(p.x*0.005)+Math.sin(p.y*0.005)*3)*2, dx=this.m.x-p.x, dy=this.m.y-p.y;
-            let fx=Math.cos(a), fy=Math.sin(a);
-            if(dx*dx+dy*dy<20000){fx+=dx*0.015;fy+=dy*0.015;}
-            p.vx+=fx*0.2;p.vy+=fy*0.2;p.vx*=0.95;p.vy*=0.95;p.x+=p.vx;p.y+=p.vy;p.l--;
-            if(p.l<0||p.x<0||p.x>this.w||p.y<0||p.y>this.h)Object.assign(p,this.r());
-            let v=Math.abs(p.vx)+Math.abs(p.vy);
-            ctx.fillStyle=`rgba(41, 128, 185, ${0.6 + v/10})`; ctx.beginPath(); ctx.arc(p.x,p.y,2,0,6.28); ctx.fill();
-        });
-    }
+   constructor(w,h){this.w=w;this.h=h;this.p=Array(600).fill().map(()=>this.r());this.m={x:-999,y:-999};
+   this.ev=e=>this.m=gp(e); window.addEventListener('mousemove',this.ev);window.addEventListener('touchmove',this.ev);}
+   r(){return{x:Math.random()*this.w,y:Math.random()*this.h,vx:0,vy:0,l:100}}
+   resize(w,h){this.w=w;this.h=h;}
+   update(ctx){
+       ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(0,0,this.w,this.h);
+       this.p.forEach(p=>{
+           let a=(Math.cos(p.x*0.005)+Math.sin(p.y*0.005)*3)*2, dx=this.m.x-p.x, dy=this.m.y-p.y, d=Math.sqrt(dx*dx+dy*dy);
+           let fx=Math.cos(a), fy=Math.sin(a);
+           if(d<150){fx-=dx/d*4; fy-=dy/d*4;}
+           p.vx+=fx*0.15; p.vy+=fy*0.15; p.vx*=0.95; p.vy*=0.95; p.x+=p.vx; p.y+=p.vy; p.l--;
+           if(p.l<0||p.x<0||p.x>this.w||p.y<0||p.y>this.h)Object.assign(p,this.r());
+           let v=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+           ctx.fillStyle=`rgba(41, 128, 185, ${0.4+v/8})`; ctx.beginPath(); ctx.arc(p.x,p.y,2,0,6.28); ctx.fill();
+       });
+   }
 }
 
-// 3. RESONANCE (Structure)
 class ResonanceSim {
-    constructor(w,h){
-        this.w=w;this.h=h;this.sym=6;
-        this.p=Array(50).fill().map(()=>({a:Math.random()*6.28,r:Math.random()*150+50,s:0.01+Math.random()*0.02,c:Math.random()>0.5?'#b7950b':'#8e44ad'}));
-        this.ev=e=>{let p=gp(e);this.sym=Math.floor((p.x/this.w)*12)+3};
-        window.addEventListener('mousemove',this.ev);window.addEventListener('touchmove',this.ev);
-    }
-    resize(w,h){this.w=w;this.h=h;}
-    update(ctx){
-        ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.fillRect(0,0,this.w,this.h);
-        ctx.save();ctx.translate(this.w/2,this.h/2);
-        this.p.forEach(p=>p.a+=p.s);
-        for(let i=0;i<this.sym;i++){
-            ctx.rotate((Math.PI*2)/this.sym);
-            this.p.forEach(p=>{
-                let x=Math.cos(p.a)*p.r,y=Math.sin(p.a)*p.r;
-                ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(x,y,3.5,0,6.28); ctx.fill();
-                ctx.strokeStyle=p.c; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(0,0); ctx.stroke();
-            });
-        }
-        ctx.restore();
-    }
+   constructor(w,h){this.w=w;this.h=h;this.sym=6;this.p=Array(40).fill().map(()=>({a:Math.random()*6.28,r:Math.random()*150+50,s:0.01+Math.random()*0.02}));
+   this.ev=e=>{let p=gp(e);this.sym=Math.floor((p.x/this.w)*12)+3};window.addEventListener('mousemove',this.ev);window.addEventListener('touchmove',this.ev);}
+   resize(w,h){this.w=w;this.h=h;}
+   update(ctx){
+       ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(0,0,this.w,this.h);
+       ctx.save(); ctx.translate(this.w/2,this.h/2);
+       this.p.forEach(p=>p.a+=p.s);
+       ctx.strokeStyle="rgba(183,149,11,0.3)"; ctx.lineWidth=1;
+       for(let i=0;i<this.sym;i++){
+           ctx.rotate((Math.PI*2)/this.sym);
+           ctx.beginPath();
+           for(let j=0;j<this.p.length-1;j+=2){
+               let p1=this.p[j], p2=this.p[j+1];
+               ctx.moveTo(Math.cos(p1.a)*p1.r, Math.sin(p1.a)*p1.r);
+               ctx.lineTo(Math.cos(p2.a)*p2.r, Math.sin(p2.a)*p2.r);
+           }
+           ctx.stroke();
+           this.p.forEach(p=>{ctx.fillStyle="#2c3e50";ctx.beginPath();ctx.arc(Math.cos(p.a)*p.r,Math.sin(p.a)*p.r,2.5,0,6.28);ctx.fill();});
+       }
+       ctx.restore();
+   }
 }
 
-// 4. GRAVITY (Orbits)
 class GravitySim {
-    constructor(w,h){
-        this.w=w;this.h=h;
-        this.p=Array(300).fill().map(()=>({x:Math.random()*w,y:Math.random()*h,vx:0,vy:0,c: Math.random()>0.5 ? '#2c3e50' : '#b7950b'}));
-        this.a=false;this.m={x:0,y:0};
-        this.d=e=>{this.a=true;this.m=gp(e);};this.mv=e=>{if(this.a)this.m=gp(e);};this.u=()=>this.a=false;
-        window.addEventListener('mousedown',this.d);window.addEventListener('touchstart',this.d);
-        window.addEventListener('mousemove',this.mv);window.addEventListener('touchmove',this.mv);
-        window.addEventListener('mouseup',this.u);window.addEventListener('touchend',this.u);
-    }
-    resize(w,h){this.w=w;this.h=h;}
-    update(ctx){
-        ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(0,0,this.w,this.h);
-        this.p.forEach(p=>{
-            if(this.a){let dx=this.m.x-p.x,dy=this.m.y-p.y,d=Math.max(1000,dx*dx+dy*dy),f=1200/d;p.vx+=(dx*f)/Math.sqrt(d);p.vy+=(dy*f)/Math.sqrt(d);}
-            p.x+=p.vx;p.y+=p.vy;p.vx*=0.99;p.vy*=0.99;if(p.x<0)p.x=this.w;if(p.x>this.w)p.x=0;if(p.y<0)p.y=this.h;if(p.y>this.h)p.y=0;
-            ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,3,0,6.28); ctx.fill();
-        });
-    }
+   constructor(w,h){this.w=w;this.h=h;this.p=Array(300).fill().map(()=>({x:Math.random()*w,y:Math.random()*h,vx:0,vy:0}));
+   this.act=false;this.m={x:0,y:0};
+   this.d=e=>{this.act=true;this.m=gp(e)};this.mv=e=>{if(this.act)this.m=gp(e)};this.u=()=>{this.act=false};
+   window.addEventListener('mousedown',this.d);window.addEventListener('touchstart',this.d);
+   window.addEventListener('mousemove',this.mv);window.addEventListener('touchmove',this.mv);
+   window.addEventListener('mouseup',this.u);window.addEventListener('touchend',this.u);}
+   resize(w,h){this.w=w;this.h=h;}
+   update(ctx){
+       ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(0,0,this.w,this.h);
+       this.p.forEach(p=>{
+           if(this.act){
+               let dx=this.m.x-p.x, dy=this.m.y-p.y, d=Math.sqrt(dx*dx+dy*dy);
+               if(d>10){let f=1500/(d*d); p.vx+=(dx/d)*f; p.vy+=(dy/d)*f;}
+           }
+           p.x+=p.vx; p.y+=p.vy; p.vx*=0.99; p.vy*=0.99;
+           if(p.x<0)p.x=this.w;if(p.x>this.w)p.x=0;if(p.y<0)p.y=this.h;if(p.y>this.h)p.y=0;
+           let s=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+           ctx.fillStyle=this.act?(s>3?'#b7950b':'#2c3e50'):'#95a5a6';
+           ctx.beginPath(); ctx.arc(p.x,p.y,this.act?2.5:2,0,6.28); ctx.fill();
+       });
+   }
 }
 
-// 5. FABRIC (Tension)
 class FabricSim {
-    constructor(w,h){this.w=w;this.h=h;this.i();this.d=null;this.dn=e=>{let m=gp(e),nr=null,md=50;this.p.forEach(p=>{let d=Math.hypot(p.x-m.x,p.y-m.y);if(d<md){md=d;nr=p}});if(nr)this.d=nr};this.mv=e=>{if(this.d){let m=gp(e);this.d.x=m.x;this.d.y=m.y;this.d.ox=m.x;this.d.oy=m.y}};this.u=()=>this.d=null;window.addEventListener('mousedown',this.dn);window.addEventListener('touchstart',this.dn,{passive:false});window.addEventListener('mousemove',this.mv);window.addEventListener('touchmove',this.mv,{passive:false});window.addEventListener('mouseup',this.u);window.addEventListener('touchend',this.u);}
-    i(){this.p=[];this.s=[];let sp=35,c=Math.min(25,Math.floor(this.w/sp)),r=Math.min(20,Math.floor(this.h/sp)),sx=(this.w-c*sp)/2,sy=50;for(let y=0;y<r;y++)for(let x=0;x<c;x++)this.p.push({x:sx+x*sp,y:sy+y*sp,ox:sx+x*sp,oy:sy+y*sp,pin:y===0});for(let y=0;y<r;y++)for(let x=0;x<c;x++){let i=y*c+x;if(x<c-1)this.s.push({a:this.p[i],b:this.p[i+1],l:sp,ok:true});if(y<r-1)this.s.push({a:this.p[i],b:this.p[i+c],l:sp,ok:true});}}
-    resize(w,h){this.w=w;this.h=h;this.i();}
-    update(ctx){
-        ctx.clearRect(0,0,this.w,this.h);
-        this.p.forEach(p=>{if(p.pin||p===this.d)return;let vx=(p.x-p.ox)*0.95,vy=(p.y-p.oy)*0.95;p.ox=p.x;p.oy=p.y;p.x+=vx;p.y+=vy+0.2;});
-        for(let i=0;i<3;i++)this.s.forEach(s=>{if(!s.ok)return;let dx=s.b.x-s.a.x,dy=s.b.y-s.a.y,d=Math.hypot(dx,dy);if(d>s.l*4)s.ok=false;let df=s.l-d,pc=df/d/2,ox=dx*pc,oy=dy*pc;if(!s.a.pin&&s.a!==this.d){s.a.x-=ox;s.a.y-=oy}if(!s.b.pin&&s.b!==this.d){s.b.x+=ox;s.b.y+=oy}});
-        ctx.lineWidth=2;
-        this.s.forEach(s=>{
-            if(!s.ok)return;
-            let st=Math.max(0,(Math.hypot(s.b.x-s.a.x,s.b.y-s.a.y)-s.l)/15);
-            ctx.strokeStyle=st<0.5?'#bdc3c7':st<0.8?'#f1c40f':'#e74c3c';
-            ctx.beginPath();ctx.moveTo(s.a.x,s.a.y);ctx.lineTo(s.b.x,s.b.y);ctx.stroke();
-        });
-        ctx.fillStyle='#2c3e50';this.p.forEach(p=>{if(p.pin||p===this.d){ctx.beginPath();ctx.arc(p.x,p.y,3,0,6.28);ctx.fill()}});
-    }
+   constructor(w,h){this.w=w;this.h=h;this.i();this.d=null;
+   this.dn=e=>{let m=gp(e),nr=null,md=50;this.p.forEach(p=>{let d=Math.hypot(p.x-m.x,p.y-m.y);if(d<md){md=d;nr=p}});if(nr)this.d=nr};
+   this.mv=e=>{if(this.d){let m=gp(e);this.d.x=m.x;this.d.y=m.y;this.d.ox=m.x;this.d.oy=m.y}};
+   this.u=()=>this.d=null;
+   window.addEventListener('mousedown',this.dn);window.addEventListener('touchstart',this.dn,{passive:false});
+   window.addEventListener('mousemove',this.mv);window.addEventListener('touchmove',this.mv,{passive:false});
+   window.addEventListener('mouseup',this.u);window.addEventListener('touchend',this.u);}
+   i(){this.p=[];this.s=[];let sp=40,c=Math.min(20,Math.floor(this.w/sp)),r=Math.min(15,Math.floor(this.h/sp)),sx=(this.w-c*sp)/2,sy=80;
+   for(let y=0;y<r;y++)for(let x=0;x<c;x++)this.p.push({x:sx+x*sp,y:sy+y*sp,ox:sx+x*sp,oy:sy+y*sp,pin:y===0});
+   for(let y=0;y<r;y++)for(let x=0;x<c;x++){let i=y*c+x;if(x<c-1)this.s.push({a:this.p[i],b:this.p[i+1],l:sp,ok:true});if(y<r-1)this.s.push({a:this.p[i],b:this.p[i+c],l:sp,ok:true});}}
+   resize(w,h){this.w=w;this.h=h;this.i();}
+   update(ctx){
+       ctx.clearRect(0,0,this.w,this.h);
+       this.p.forEach(p=>{if(p.pin||p===this.d)return;let vx=(p.x-p.ox)*0.95,vy=(p.y-p.oy)*0.95;p.ox=p.x;p.oy=p.y;p.x+=vx;p.y+=vy+0.2;});
+       for(let i=0;i<3;i++)this.s.forEach(s=>{if(!s.ok)return;let dx=s.b.x-s.a.x,dy=s.b.y-s.a.y,d=Math.hypot(dx,dy);if(d>s.l*4)s.ok=false;let df=s.l-d,pc=df/d/2,ox=dx*pc,oy=dy*pc;if(!s.a.pin&&s.a!==this.d){s.a.x-=ox;s.a.y-=oy}if(!s.b.pin&&s.b!==this.d){s.b.x+=ox;s.b.y+=oy}});
+       ctx.lineWidth=2;
+       this.s.forEach(s=>{if(!s.ok)return;let len=Math.hypot(s.b.x-s.a.x,s.b.y-s.a.y), st=(len-s.l)/15;
+       let r=Math.min(255,st*255*2), g=Math.max(0,200-st*200); ctx.strokeStyle=`rgb(${r},${g},0)`;
+       ctx.beginPath();ctx.moveTo(s.a.x,s.a.y);ctx.lineTo(s.b.x,s.b.y);ctx.stroke();});
+       ctx.fillStyle='#34495e';this.p.forEach(p=>{if(p.pin||p===this.d){ctx.beginPath();ctx.arc(p.x,p.y,4,0,6.28);ctx.fill()}});
+   }
 }
 
-// 6. FINALE (Rising Incense)
 class FinaleSim {
-    constructor(w,h){
-        this.w=w;this.h=h; this.pts=[];
-    }
-    resize(w,h){this.w=w;this.h=h;}
-    update(ctx){
-        ctx.fillStyle='rgba(255, 252, 245, 0.1)'; ctx.fillRect(0,0,this.w,this.h);
-        
-        // Spawn
-        if(this.pts.length < 200) {
-            this.pts.push({
-                x: Math.random()*this.w, y: this.h + 20,
-                vx: (Math.random()-0.5)*0.5, vy: -Math.random()*2 - 0.5,
-                s: Math.random()*3 + 1,
-                alpha: 1
-            });
-        }
-
-        for(let i=this.pts.length-1; i>=0; i--){
-            let p = this.pts[i];
-            p.x += p.vx + Math.sin(p.y*0.01)*0.5;
-            p.y += p.vy;
-            p.alpha -= 0.005;
-            
-            ctx.fillStyle = `rgba(183, 149, 11, ${p.alpha})`; // Gold
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
-            
-            if(p.alpha <= 0) this.pts.splice(i,1);
-        }
-    }
+   constructor(w,h){this.w=w;this.h=h;this.p=[];}
+   resize(w,h){this.w=w;this.h=h;}
+   update(ctx){
+       ctx.fillStyle='rgba(255,252,245,0.1)'; ctx.fillRect(0,0,this.w,this.h);
+       if(this.p.length<200) this.p.push({x:Math.random()*this.w,y:this.h+10,vx:(Math.random()-0.5)*0.5,vy:-Math.random()*2-0.5,s:Math.random()*3+1,a:1});
+       for(let i=this.p.length-1;i>=0;i--){
+           let p=this.p[i]; p.x+=p.vx+Math.sin(p.y*0.01)*0.5; p.y+=p.vy; p.a-=0.005;
+           ctx.fillStyle=`rgba(183,149,11,${p.a})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,6.28); ctx.fill();
+           if(p.a<=0)this.p.splice(i,1);
+       }
+   }
 }
 
 function gp(e){let t=e.touches?e.touches[0]:e;return{x:t.clientX,y:t.clientY};}
@@ -665,4 +541,3 @@ app.init();
 </script>
 </body>
 </html>
-```
